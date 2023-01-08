@@ -284,13 +284,18 @@ AUTHENTICATION_BACKENDS = [
 ]
 
 # https://github.com/pennersr/django-allauth
-ACCOUNT_EMAIL_VERIFICATION = 'none'
-ACCOUNT_AUTHENTICATION_METHOD = 'username_email'
+# ACCOUNT_EMAIL_VERIFICATION = 'none'
+# ACCOUNT_AUTHENTICATION_METHOD = 'username_email'
 # set UI url to redirect after a successful e-mail confirmation
 #changed from '/auth/login' to '/auth/email-confirmation' for email confirmation message
 ACCOUNT_EMAIL_CONFIRMATION_ANONYMOUS_REDIRECT_URL = '/auth/email-confirmation'
 ACCOUNT_EMAIL_VERIFICATION_SENT_REDIRECT_URL = '/auth/email-verification-sent'
 INCORRECT_EMAIL_CONFIRMATION_URL = '/auth/incorrect-email-confirmation'
+
+ACCOUNT_AUTHENTICATION_METHOD = 'username'
+ACCOUNT_CONFIRM_EMAIL_ON_GET = True
+ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_EMAIL_VERIFICATION = 'mandatory'
 
 OLD_PASSWORD_FIELD_ENABLED = True
 
@@ -635,11 +640,17 @@ if USE_ALLAUTH_SOCIAL_ACCOUNTS:
     # default = ACCOUNT_EMAIL_REQUIRED
     SOCIALACCOUNT_QUERY_EMAIL = True
     SOCIALACCOUNT_CALLBACK_CANCELLED_URL = '/auth/login'
-    # custom variable because by default LOGIN_REDIRECT_URL will be used
-    SOCIAL_APP_LOGIN_REDIRECT_URL = 'http://localhost:8080/auth/login-with-social-app'
 
-    GITHUB_CALLBACK_URL = 'http://localhost:8080/api/auth/github/login/callback/'
-    GOOGLE_CALLBACK_URL = 'http://localhost:8080/api/auth/google/login/callback/'
+    # Set the redirect URI required by the OAuth service (i.e. google)
+    CVAT_HOST = os.getenv('CVAT_HOST', 'localhost')
+    CVAT_BASE_URL = os.getenv('CVAT_BASE_URL', f'http://{CVAT_HOST}:8080').rstrip('/')
+    SOCIAL_APP_LOGIN_REDIRECT_URL = f'{CVAT_BASE_URL}/auth/login-with-social-app'
+    GITHUB_CALLBACK_URL = f'{CVAT_BASE_URL}/api/auth/github/login/callback/'
+    GOOGLE_CALLBACK_URL = f'{CVAT_BASE_URL}/api/auth/google/login/callback/'
+
+    # SOCIAL_APP_LOGIN_REDIRECT_URL = os.getenv('SOCIAL_APP_LOGIN_REDIRECT_URL')
+    # GITHUB_CALLBACK_URL = os.getenv('GITHUB_CALLBACK_URL')
+    # GOOGLE_CALLBACK_URL = os.getenv('GOOGLE_CALLBACK_URL')
 
     SOCIAL_AUTH_GOOGLE_CLIENT_ID = os.getenv('SOCIAL_AUTH_GOOGLE_CLIENT_ID')
     SOCIAL_AUTH_GOOGLE_CLIENT_SECRET = os.getenv('SOCIAL_AUTH_GOOGLE_CLIENT_SECRET')

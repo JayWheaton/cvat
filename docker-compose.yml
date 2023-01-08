@@ -226,6 +226,8 @@ volumes:
   cvat_data:
   cvat_keys:
   cvat_logs:
+  cvat_share:
+    external: true
 
 networks:
   cvat:
